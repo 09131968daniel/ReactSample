@@ -1,22 +1,49 @@
 import React, { Component } from 'react'
+import axios from 'axios'
 
 class LoginForm extends Component {
-    state = {
-        currentUser: {
-            username: "",
-            password: ""
+    constructor(props) {
+        super()
+        this.state = {
+            currentUser: {
+                username: "",
+                password: ""
+            },
+            data: []
         }
     }
     
-    handleSubmit = (e) => {
-        e.preventDefault()
+    componentDidMount() {
+        localStorage.removeItem("username")
     }
+    
+    handleSubmit =async (e) => {
+        e.preventDefault()
+        const { username, password } = this.state.currentUser;
+       
+        try {
+            const result = await axios.get(`http://localhost:9001/user/login?username=${username}&password=${password}`);
+
+            localStorage.setItem('username',username )
+            
+            this.props.history.replace('/')
+            
+        } catch (ex) {
+           
+            if ((ex.response) && ex.response.status === 409)
+                alert("Wrong username or password!")
+             else {
+                console.log("Logging the error", ex)
+                alert("An unexpected error occur!")
+            }
+        }
+    };
  
 
     handleChange = e => {
-        const currentUser = { ...this.state.currentUser }
-        currentUser[e.currentTarget.name] = e.currentTarget.value
-        this.setState({ currentUser })
+        const currentUser = { ...this.state.currentUser };
+        currentUser[e.currentTarget.name] = e.currentTarget.value;
+        this.setState({ currentUser });
     };
 
     render() {
@@ -24,8 +51,7 @@ class LoginForm extends Component {
             <div>
                 <div className="container">
                     <h1>Login Form</h1>
-                    <br />
-                   
+                    <br />    
                     <form onSubmit={this.handleSubmit}>
                         <div className="form-group">
                             <label htmlFor="username">Username</label>
@@ -34,10 +60,10 @@ class LoginForm extends Component {
                         <div className="form-group">
                             <label htmlFor="password">Password</label>
                             <input onChange={this.handleChange} value={this.state.currentUser.password} name="password" type="text" className="form-control" id="password" />
+                        
                         </div>
                         <input className="btn btn-primary" type="submit"></input>
                     </form>
-                  
                 </div>
             </div>
         )

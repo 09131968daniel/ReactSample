@@ -1,25 +1,37 @@
 import logo from './logo.svg';
 import './App.css';
+import React, { Component } from 'react'
+import LoginForm from './loginForm'
+import RegisterForm from './registerForm'
+import Users from './users'
+import { Route, Switch, Redirect } from 'react-router-dom'
+import NavBar from './navBar'
+import Home from './home'
+import NotFound from './notFound'
+import UserForm from './userForm'
+import ProtectedRoute from './protectedRoute'
+import Counter from './counter'
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends Component {
+  render() {
+    return (
+      <div>
+        <NavBar />
+     
+        <div className="content">
+          <Switch>
+            <Route path="/users/:id" component={UserForm} />
+            <ProtectedRoute path="/users" component={Users} />
+            <Route path="/register" component={RegisterForm} />
+            <Route path="/login" component={LoginForm} />
+            <Route path="/not-found" component={NotFound} />
+            <Redirect from="/logout"  to ="/login"  />
+            <ProtectedRoute path="/" exact component={Home} />
+            <Redirect to="/not-found" />
+          </Switch>
+        </div>
+      </div>
+    )
+  }
 }
-
-export default App;
+    export default App;
